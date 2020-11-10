@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: whitesmoke;
+  font-family: Arial, sans-serif;
+}
+
+#nav {
+  display: sticky;
+  background-color: thistle;
+  padding: 10px;
+  box-shadow: 0px 2px 10px lightgray;
+}
+
+.errors {
+  color: red;
+}
