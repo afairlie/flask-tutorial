@@ -53,6 +53,11 @@ def logout():
   logout_user()
   return redirect(url_for('index'))
 
+@app.route('/secure')
+@login_required
+def secure():
+  return render_template('secure.html')
+
 @app.route('/user/<username>')
 @login_required
 def user(username):
@@ -62,14 +67,18 @@ def user(username):
     return render_template('user.html', user=user, posts=posts)
   return redirect(url_for('login'))
 
-@app.route('/secure')
-@login_required
-def secure():
-  return render_template('secure.html')
-
 @app.route('/user/<username>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    if (current_user.username is user.username):
+      # RETURNING MITHRIL COMPONENT IN HTML - swap for edit_profile.html in future
+      return render_template('mithril_profile.html')
+
+# API ROUTE TO PLAY WITH MITHRIL
+@app.route('/api/user/<username>')
+@login_required
+def info(username):
     user = User.query.filter_by(username=username).first_or_404()
     if (current_user.username is user.username):
       return { "about_me": current_user.about_me, "username": current_user.username }
