@@ -4,6 +4,13 @@ from app.forms import LoginForm, RegisterForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Post
 from werkzeug.urls import url_parse
+from datetime import datetime
+
+@app.before_request
+def before_request():
+  if current_user.is_authenticated:
+    current_user.last_seen = datetime.utcnow()
+    db.session.commit()
 
 @app.route('/')
 def index():
@@ -59,3 +66,10 @@ def user(username):
 @login_required
 def secure():
   return render_template('secure.html')
+
+@app.route('/user/<username>/edit', methods=['GET', 'POST'])
+@login_required
+def edit(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    if (current_user.username is user.username):
+      return { "about_me": current_user.about_me, "username": current_user.username }
