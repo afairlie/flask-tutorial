@@ -72,8 +72,7 @@ def user(username):
 def edit(username):
     user = User.query.filter_by(username=username).first_or_404()
     if (current_user.username is user.username):
-      # RETURNING MITHRIL COMPONENT IN HTML - swap for edit_profile.html in future
-      return render_template('mithril_profile.html')
+      return render_template('edit_profile.html')
 
 # API ROUTE TO PLAY WITH MITHRIL
 @app.route('/api/user/<username>')
