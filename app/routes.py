@@ -1,6 +1,6 @@
 from flask import render_template, redirect, flash, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegisterForm
+from app.forms import LoginForm, RegisterForm, EditProfileForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Post
 from werkzeug.urls import url_parse
@@ -62,17 +62,24 @@ def secure():
 @login_required
 def user(username):
   user = User.query.filter_by(username=username).first_or_404()
-  if (current_user.username is user.username):
-    posts = user.posts.all()
-    return render_template('user.html', user=user, posts=posts)
-  return redirect(url_for('login'))
+  posts = user.posts.all()
+  return render_template('user.html', user=user, posts=posts)
 
 @app.route('/user/<username>/edit', methods=['GET', 'POST'])
 @login_required
-def edit(username):
+def edit_user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    if (current_user.username is user.username):
-      return render_template('edit_profile.html')
+    form = EditProfileForm()
+    if form.validate_on_submit():
+      current_user.username = form.username.data
+      current_user.about_me = form.about_me.data
+      db.session.commit()
+      flash('Your changes have been saved.')
+      return redirect(url_for('edit_user', username=current_user.username))
+    elif request.method == 'GET' and current_user.username is user.username:
+      form.username.data = current_user.username
+      form.about_me.data = current_user.about_me
+      return render_template('edit_profile.html', title='Edit Profile', form=form, cancel=request.referrer)
 
 # API ROUTE TO PLAY WITH MITHRIL
 @app.route('/api/user/<username>')

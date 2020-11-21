@@ -8,7 +8,9 @@
           <h1>User: {{ user.username }}</h1>
           {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
           {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
-          <a href="{{ url_for('edit', username=current_user.username) }}">edit profile</a>
+          {% if user == current_user %}
+          <a href="{{ url_for('edit_user', username=current_user.username) }}">edit profile</a>
+          {% endif %}
           <!-- {%- include '_mithril_edit_profile.html' %} -->
         </td>
     </tr>
