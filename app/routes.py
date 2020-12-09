@@ -69,7 +69,7 @@ def user(username):
 @login_required
 def edit_user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    form = EditProfileForm()
+    form = EditProfileForm(current_user)
     if form.validate_on_submit():
       current_user.username = form.username.data
       current_user.about_me = form.about_me.data
